@@ -138,3 +138,61 @@ body {
 .lightbox__button:focus {
   background-color: rgba(0, 0, 0, 0.5);
 }
+
+.lightbox__right__arrow {
+  position: absolute;
+  top: 50%;
+  right: 2%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  margin: 0;
+  border: none;
+  border-radius: 60%;
+  background-color: transparent;
+  color: red;
+  cursor: pointer;
+  transition: background-color var(--animation-duration) var(--timing-function);
+  outline: none;
+  background-image: url('../images/arrow-right.svg');
+  background-position: center;
+  background-size: 70%;
+  background-repeat: no-repeat;
+}
+
+.lightbox__right__arrow:hover,
+.lightbox__right__arrow:focus {
+  background-color: rgb(60, 255, 0);
+}
+
+.lightbox__left__arrow {
+  position: absolute;
+  top: 50%;
+  right: 96%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  margin: 0;
+  border: none;
+  border-radius: 60%;
+  background-color: transparent;
+  color: red;
+  cursor: pointer;
+  transition: background-color var(--animation-duration) var(--timing-function);
+  outline: none;
+  background-image: url('../images/arrow-left.svg');
+  background-position: center;
+  background-size: 70%;
+  background-repeat: no-repeat;
+}
+
+.lightbox__left__arrow:hover,
+.lightbox__left__arrow:focus {
+  background-color: rgb(60, 255, 0);
+}

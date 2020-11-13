@@ -1,38 +1,48 @@
-import gallery from "./gallery-items.js";
+import gallery from './gallery-items.js';
 
-const wrapperRef = document.querySelector(".js-gallery");
+const wrapperRef = document.querySelector('.js-gallery');
 
-const getImageFromGallery = gallery.map((el) => createGallery(el));
+const getImageFromGallery = gallery.map((el, i) => onCreateGallery(el, i));
 
 wrapperRef.append(...getImageFromGallery);
 
 const mainRefs = {
-  boxImageRef: document.querySelector(".lightbox__image"),
-  backDropWrapper: document.querySelector(".lightbox"),
+  boxImageRef: document.querySelector('.lightbox__image'),
+  backDropWrapper: document.querySelector('.lightbox'),
   onCloseBtnRef: document.querySelector('button[data-action="close-lightbox"]'),
-  backDrop: document.querySelector(".lightbox__overlay"),
+  backDrop: document.querySelector('.lightbox__overlay'),
+  imagesRef: document.querySelector('.js-lightbox'),
+  btnRightArrowRef: document.querySelector(
+    'button[data-change="right__arrow"]',
+  ),
+  btnLeftArrowRef: document.querySelector('button[data-change="left__arrow"]'),
 };
 
-wrapperRef.addEventListener("click", onOpenModal);
-mainRefs.backDrop.addEventListener("click", onOverlayCloseModal);
-mainRefs.onCloseBtnRef.addEventListener("click", onCloseModal);
-window.addEventListener("keydown", onCloseModalByEsc);
+wrapperRef.addEventListener('click', openModal);
+mainRefs.backDrop.addEventListener('click', onBackDropCloseModal);
+mainRefs.onCloseBtnRef.addEventListener('click', closeModal);
+window.addEventListener('keyup', closeModalByEsc);
+window.addEventListener('keyup', pressRightBtn);
+window.addEventListener('keyup', pressLeftBtn);
+mainRefs.btnRightArrowRef.addEventListener('click', onRightArrowClick);
+mainRefs.btnLeftArrowRef.addEventListener('click', onLeftArrowClick);
 
-function createGallery(image) {
+function onCreateGallery(image, i) {
   const refs = {
-    createListRef: document.createElement("li"),
-    createImageRef: document.createElement("img"),
-    createLinkRef: document.createElement("a"),
+    createListRef: document.createElement('li'),
+    createImageRef: document.createElement('img'),
+    createLinkRef: document.createElement('a'),
   };
 
-  refs.createListRef.classList.add("gallery__item");
-  refs.createImageRef.classList.add("gallery__image");
-  refs.createLinkRef.classList.add("gallery__link");
+  refs.createListRef.classList.add('gallery__item');
+  refs.createImageRef.classList.add('gallery__image');
+  refs.createLinkRef.classList.add('gallery__link');
 
-  refs.createLinkRef.setAttribute("href", image.original);
-  refs.createImageRef.setAttribute("src", image.preview);
-  refs.createImageRef.setAttribute("alt", image.description);
-  refs.createImageRef.setAttribute("data-source", image.original);
+  refs.createLinkRef.setAttribute('href', image.original);
+  refs.createImageRef.setAttribute('src', image.preview);
+  refs.createImageRef.setAttribute('alt', image.description);
+  refs.createImageRef.setAttribute('data-source', image.original);
+  refs.createImageRef.setAttribute('data-index', i);
 
   refs.createLinkRef.append(refs.createImageRef);
   refs.createListRef.append(refs.createLinkRef);
@@ -40,37 +50,72 @@ function createGallery(image) {
   return refs.createListRef;
 }
 
-function onOpenModal(event) {
+function imgAttribute(src, alt, index) {
+  mainRefs.boxImageRef.setAttribute('src', src);
+  mainRefs.boxImageRef.setAttribute('alt', alt);
+  mainRefs.boxImageRef.setAttribute('data-index', index);
+}
+
+function openModal(event) {
   event.preventDefault();
 
   const getImg = event.target;
 
-  if (getImg.nodeName !== "IMG") {
+  if (getImg.nodeName !== 'IMG') {
     return;
   }
 
-  mainRefs.backDropWrapper.classList.add("is-open");
-  mainRefs.boxImageRef.setAttribute("src", getImg.dataset.source);
-  mainRefs.boxImageRef.setAttribute("alt", getImg.alt);
+  mainRefs.backDropWrapper.classList.add('is-open');
+  imgAttribute(getImg.dataset.source, getImg.alt, getImg.dataset.index);
 }
 
-function onCloseModal() {
-  mainRefs.boxImageRef.setAttribute("src", "");
-  mainRefs.boxImageRef.setAttribute("alt", "");
-  mainRefs.backDropWrapper.classList.toggle("is-open");
+function closeModal() {
+  mainRefs.boxImageRef.setAttribute('src', '');
+  mainRefs.boxImageRef.setAttribute('alt', '');
+  mainRefs.backDropWrapper.classList.toggle('is-open');
 }
 
-function onOverlayCloseModal(event) {
+function onBackDropCloseModal(event) {
   if (event.target === event.currentTarget) {
-    onCloseModal();
+    closeModal();
   }
 }
 
-function onCloseModalByEsc(event) {
-  if (event.key !== "Escape") {
+function closeModalByEsc(event) {
+  if (event.key !== 'Escape') {
     return;
   }
+  closeModal();
+}
 
-  //   console.log(event);
-  onCloseModal();
+function pressRightBtn(event) {
+  if (event.key === 'ArrowRight') {
+    setImgAttribute(+mainRefs.boxImageRef.dataset.index, +1);
+  }
+}
+
+function pressLeftBtn(event) {
+  if (event.key === 'ArrowLeft') {
+    setImgAttribute(+mainRefs.boxImageRef.dataset.index, -1);
+  }
+}
+
+function onRightArrowClick() {
+  setImgAttribute(+mainRefs.boxImageRef.dataset.index, +1);
+}
+
+function onLeftArrowClick() {
+  setImgAttribute(+mainRefs.boxImageRef.dataset.index, -1);
+}
+
+function setImgAttribute(index, count) {
+  const newIndex = index + count;
+  if (newIndex === -1) return;
+
+  if (newIndex === gallery.length) return;
+  imgAttribute(
+    gallery[newIndex].original,
+    gallery[newIndex].description,
+    newIndex,
+  );
 }
