@@ -117,7 +117,7 @@ function onLeftArrowClick() {
 function setImgAttribute(index, count) {
   const newIndex = index + count;
 
-  if (newIndex === gallery.length && newIndex === -1) return;
+  if (newIndex === gallery.length || newIndex === -1) return;
 
   imgAttribute(
     gallery[newIndex].original,
